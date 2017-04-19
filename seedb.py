@@ -17,12 +17,18 @@ class SeeDB:
         self.where1,self.where2 = input('1つ目のwhere句を入力してください->'),input('2つ目のwhere句を入力してください->')
 
     def query(self):
-        query1 = 'select ' + self.attribute2 +',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
+        if self.func == 'sum' or '注文金額' in self.attribute1:
+            query1 = 'select ' + self.attribute2 +',' + self.func + '(' + 'CAST(' + self.attribute1 + ' AS BIGINT' + '))' + ' from ' + self.table
+        else:
+            query1 = 'select ' + self.attribute2 + ',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
         if self.where1 != '':
             query1 += ' where ' + self.where1
         query1 += ' group by ' + self.attribute2 + ' order by ' + self.attribute2
 
-        query2 = 'select ' + self.attribute2 +',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
+        if self.func == 'sum' or '注文金額' in self.attribute1:
+            query2 = 'select ' + self.attribute2 + ',' + self.func + '(' + 'CAST(' + self.attribute1 + ' AS BIGINT' + ')) ' + ' from ' + self.table
+        else:
+            query2 = 'select ' + self.attribute2 +',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
         if self.where2 != '':
             query2 += ' where ' + self.where2
         query2 += ' group by ' + self.attribute2 + ' order by ' + self.attribute2
@@ -31,7 +37,6 @@ class SeeDB:
         data1 = self.cursor.fetchall()
         self.cursor.execute(query2)
         data2 = self.cursor.fetchall()
-
 
         return data1,data2
 
@@ -47,12 +52,13 @@ class SeeDB:
         a = time.time()
         x,y = self.query()
         self.query_time += time.time() - a
-        deviance = 0
+        deviance = -1
 
         a = time.time()
         x,y = self.nomalization(x),self.nomalization(y)
 
         if len(x) == len(y):
+            deviance = 0
             for i in range(len(x)):
                 deviance += math.fabs(x[i][1]-y[i][1])
 
@@ -61,20 +67,23 @@ class SeeDB:
         return deviance
 
     def cheak_k(self,d):
+        if self.attribute1 == '*':
+            self.attribute1 = '.'+self.attribute1
         if len(self.top_k) == 0:
             self.top_k[0] = (d,(self.func,self.attribute1.split('.')[1],self.attribute2.split('.')[1]))
         elif len(self.top_k) < self.k:
+
             target = (d, (self.func,self.attribute1.split('.')[1], self.attribute2.split('.')[1]))
             flg = -1
             for i, j in self.top_k.items():
-                if j[0] > target[0]:
+                if j[0] < target[0]:
                     self.top_k[i] = target
                     target,flg = j,-1
             self.top_k[len(self.top_k)] = target
         else:
             target = (d,(self.func,self.attribute1.split('.')[1],self.attribute2.split('.')[1]))
             for i,j in self.top_k.items():
-                if j[0] > target[0]:
+                if j[0] < target[0]:
                     self.top_k[i] = target
                     target = j
 
@@ -93,19 +102,15 @@ class SeeDB:
 
     def main(self):
         self.attribute1, self.attribute2, self.func = '[member2].顧客番号', '[member2].都道府県', 'count'
-        for i in range(5):
-            d = self.distance()
 
-            if i %2 == 0:
-                d += i/40
-            else:
-                d -= i/40
-
-            a = time.time()
-            self.cheak_k(d)
-            self.sort_time += time.time() - a
-
-            #print('time:',time.time()-self.start)
+        for self.attribute2, ite in self.data_set.items():
+            for self.func, self.attribute1 in ite:
+                d = self.distance()
+                a = time.time()
+                if d != -1:
+                    self.cheak_k(d)
+                self.sort_time += time.time() - a
+            print(time.time() - self.start)
 
         self.output()
 

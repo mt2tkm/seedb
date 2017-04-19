@@ -6,7 +6,7 @@ if __name__ == "__main__":
     #データベース関連の指定
     db,table,data_set = data()
 
-    top_k = 3
+    top_k = 10
 
     framework = SeeDB(db,data_set,table,top_k)
     framework.main()
