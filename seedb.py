@@ -101,7 +101,6 @@ class SeeDB:
         print('================================================================')
 
     def main(self):
-        self.attribute1, self.attribute2, self.func = '[member2].顧客番号', '[member2].都道府県', 'count'
 
         for self.attribute2, ite in self.data_set.items():
             for self.func, self.attribute1 in ite:
