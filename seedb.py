@@ -18,6 +18,7 @@ class SeeDB:
 
     def query(self):
         if self.func == 'sum' or '注文金額' in self.attribute1:
+
             query1 = 'select ' + self.attribute2 +',' + self.func + '(' + 'CAST(' + self.attribute1 + ' AS BIGINT' + '))' + ' from ' + self.table
         else:
             query1 = 'select ' + self.attribute2 + ',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
@@ -52,17 +53,24 @@ class SeeDB:
         a = time.time()
         x,y = self.query()
         self.query_time += time.time() - a
-        deviance = -1
+        deviance = 0
 
         a = time.time()
         x,y = self.nomalization(x),self.nomalization(y)
 
-        if len(x) == len(y):
-            deviance = 0
-            for i in range(len(x)):
-                deviance += math.fabs(x[i][1]-y[i][1])
+        dd = dict()
+        for i, j in x:
+            dd[i] = j
+        for i, j in y:
+            if i in dd:
+                dd[i] = math.fabs(dd[i] - j)
+            else:
+                dd[i] = j
 
-        self.deviance_time += time.time()-a
+        for x, dis in dd.items():
+            deviance += dis
+
+        self.deviance_time += time.time() - a
 
         return deviance
 
@@ -109,7 +117,7 @@ class SeeDB:
                 if d != -1:
                     self.cheak_k(d)
                 self.sort_time += time.time() - a
+
             print(time.time() - self.start)
 
         self.output()
-

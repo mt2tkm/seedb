@@ -18,6 +18,7 @@ def data():
         '[Item].ショップ番号'               : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
         '[Item].ブランド番号'               : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
         '[Item].商品カテゴリ大'             : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
+        '[Item].商品カテゴリ小'             : [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),('avg', '[Order].注文時追加料金')],
         '[Item].商品詳細番号'               : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
         #'[Item].商品番号'                   : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
         '[OrderDetail].セール商品FLG'    : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')],
@@ -32,55 +33,4 @@ def data():
     return db_name,table,data_set
 
 if __name__ == '__main__':
-    data_set = list()
-    data_set = {
-        '[Member2].アンケートフラグ': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                               ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                               ('avg', '[Order].注文時追加料金')],
-        '[Member2].性別': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                         ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                         ('avg', '[Order].注文時追加料金')],
-        '[Member2].都道府県': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                           ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                           ('avg', '[Order].注文時追加料金')],
-        '[Member2].年代': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                         ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                         ('avg', '[Order].注文時追加料金')],
-        '[Item].カラーカテゴリ': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                           ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                           ('avg', '[Order].注文時追加料金')],
-        '[Item].サイズ': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                       ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                       ('avg', '[Order].注文時追加料金')],
-        '[Item].ショップ番号': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                          ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                          ('avg', '[Order].注文時追加料金')],
-        '[Item].ブランド番号': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                          ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                          ('avg', '[Order].注文時追加料金')],
-        '[Item].商品カテゴリ': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                          ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                          ('avg', '[Order].注文時追加料金')],
-        '[Item].商品詳細番号': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                          ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                          ('avg', '[Order].注文時追加料金')],
-        '[Item].商品番号': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                        ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                        ('avg', '[Order].注文時追加料金')],
-        '[OrderDetail].セール商品フラグ': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                                   ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'),
-                                   ('avg', '[OrderDetail].注文金額'), ('avg', '[Order].注文時追加料金')],
-        '[Order].購入時デバイス': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                            ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                            ('avg', '[Order].注文時追加料金')],
-        '[Order].注文日': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                        ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                        ('avg', '[Order].注文時追加料金')],
-        '[Order].予約FLG': [('count', '*'), ('sum', '[OrderDetail].数量'), ('sum', '[OrderDetail].注文金額'),
-                          ('sum', '[Order].注文時追加料金'), ('avg', '[OrderDetail].数量'), ('avg', '[OrderDetail].注文金額'),
-                          ('avg', '[Order].注文時追加料金')]
-    }
-
-    for i,j in data_set.items():
-        for m,n in j:
-            print(m,n)
+    print(00)
