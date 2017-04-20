@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time,math
 from config import config_data
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt, pandas as pd
 
 class SeeDB:
     query_time,deviance_time,sort_time = 0,0,0
@@ -18,7 +18,6 @@ class SeeDB:
 
     def query(self):
         if self.func == 'sum' or '注文金額' in self.attribute1:
-
             query1 = 'select ' + self.attribute2 +',' + self.func + '(' + 'CAST(' + self.attribute1 + ' AS BIGINT' + '))' + ' from ' + self.table
         else:
             query1 = 'select ' + self.attribute2 + ',' + self.func + '(' + self.attribute1 + ')' + ' from ' + self.table
@@ -57,7 +56,6 @@ class SeeDB:
 
         a = time.time()
         x,y = self.nomalization(x),self.nomalization(y)
-
         dd = dict()
         for i, j in x:
             dd[i] = j
@@ -66,7 +64,6 @@ class SeeDB:
                 dd[i] = math.fabs(dd[i] - j)
             else:
                 dd[i] = j
-
         for x, dis in dd.items():
             deviance += dis
 
@@ -77,11 +74,11 @@ class SeeDB:
     def cheak_k(self,d):
         if self.attribute1 == '*':
             self.attribute1 = '.'+self.attribute1
-        if len(self.top_k) == 0:
-            self.top_k[0] = (d,(self.func,self.attribute1.split('.')[1],self.attribute2.split('.')[1]))
-        elif len(self.top_k) < self.k:
 
-            target = (d, (self.func,self.attribute1.split('.')[1], self.attribute2.split('.')[1]))
+        if len(self.top_k) == 0:
+            self.top_k[0] = (d,(self.func,self.attribute1,self.attribute2)
+        elif len(self.top_k) < self.k:
+            target = (d, (self.func,self.attribute1, self.attribute2)
             flg = -1
             for i, j in self.top_k.items():
                 if j[0] < target[0]:
@@ -89,7 +86,7 @@ class SeeDB:
                     target,flg = j,-1
             self.top_k[len(self.top_k)] = target
         else:
-            target = (d,(self.func,self.attribute1.split('.')[1],self.attribute2.split('.')[1]))
+            target = (d,(self.func,self.attribute1,self.attribute2)
             for i,j in self.top_k.items():
                 if j[0] < target[0]:
                     self.top_k[i] = target
@@ -108,8 +105,10 @@ class SeeDB:
         print('Sort_time:',self.sort_time)
         print('================================================================')
 
-    def main(self):
+    def visualization(self):
+        print(1)
 
+    def main(self):
         for self.attribute2, ite in self.data_set.items():
             for self.func, self.attribute1 in ite:
                 d = self.distance()
@@ -117,7 +116,7 @@ class SeeDB:
                 if d != -1:
                     self.cheak_k(d)
                 self.sort_time += time.time() - a
-
             print(time.time() - self.start)
 
         self.output()
+        #self.visualization()
