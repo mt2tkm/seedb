@@ -98,7 +98,7 @@ class SeeDB:
     def visualization(self):
         n = math.ceil(np.sqrt(self.k))
         m = math.ceil(self.k / n)
-        fig, axes = plt.subplots(nrows=n, ncols=m, figsize=(10, 8))
+        fig, axes = plt.subplots(nrows=n, ncols=m, figsize=(15, 12))
         ii = 0
         for dis,dt in self.top_k.items():
 
@@ -132,8 +132,8 @@ class SeeDB:
             ii+=1
             if ii > self.k:
                 break
-        plt.show()
-        #plt.savefig('sample.png')
+        #plt.show()
+        plt.savefig('sample.png')
 
     def output(self):
         print('================================================================')
