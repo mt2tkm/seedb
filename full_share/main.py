@@ -4,9 +4,9 @@ from fasionec import data
 
 if __name__ == "__main__":
     #データベース関連の指定
-    db,table,data_set = data()
+    db,table,groupby,aggregate = data()
 
     top_k = 10
 
-    framework = SeeDB(db,data_set,table,top_k)
+    framework = SeeDB(db,groupby,table,top_k,aggregate)
     framework.main()
