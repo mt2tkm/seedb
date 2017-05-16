@@ -2,34 +2,47 @@
 import time,math,numpy as np
 from config import config_data
 import matplotlib.pyplot as plt
+import pandas as pd
 
 class SeeDB:
     query_time,deviance_time,sort_time,visualization_time = 0,0,0,0
 
     def __init__(self, db, groupby, table, k, aggregate):
-        self.cursor = config_data(db)
+        self.con,self.cursor = config_data(db)
         self.groupby, self.table,self.k,self.aggregate = groupby, table, k, aggregate
         self.start = time.time()
         self.top_k = {}
         self.terms()
 
     def terms(self):
-        self.where1,self.where2 = input('1つ目のwhere句を入力してください->'),input('2つ目のwhere句を入力してください->')
+        self.column1, self.where1 = input('1つ目のwhere句の属性を入力してください->'), input('1つ目のwhere句の具体的条件を入力してください->')
+        self.column2, self.where2 = input('2つ目のwhere句の属性を入力してください->'), input('2つ目のwhere句の具体的条件を入力してください->')
 
     def fullshare_query(self):
         g_b = str()
         for group in self.groupby:
             g_b += group + ', '
-        select = 'select ' + g_b + ', '
+        select = 'select ' + g_b
         for agg in self.aggregate:
-            select = select + 'sum(CAST(' + agg + ' AS BIGINT)), ' + 'count(' + agg + '), '
+            select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', ' + 'count(' + agg + ') AS 個数_' + agg.split('.')[1] + ' , '
         select = select[:-2]
         
         full_query = select + 'from ' + self.table + ' group by ' + g_b[:-2] + ' order by ' + g_b[:-2]
-        cur.execute(full_query)
-        self.results = cur.fetchall()
-        
-        
+
+        self.df = pd.io.sql.read_sql(full_query,self.con)
+
+    def roop(self):
+        print(len(self.df))
+        df1 = self.df
+        for i in range(len(self.groupby)):
+            dt1 = df1[df1[self.column1] == self.where1].groupby(df1.columns[0]).sum().iloc[:,-6:]
+        print(dt1)
+        sample = (dt1 - dt1.mean())/dt1.std()
+        print(sample)
+
+
+
+
     def nomalization(self,data):
         z,sum_x = tuple(),0
         for x,y in data:
@@ -134,10 +147,12 @@ class SeeDB:
         print('Visualization_time:',self.visualization_time)
         print('================================================================')
 
+
     def main(self):
-        self.fullshare_query()
-        
         a = time.time()
+        self.fullshare_query()
+        self.query_time += time.time() - a
+        self.roop()
         #self.visualization()
         #self.visualization_time = time.time() - a
         #self.output()

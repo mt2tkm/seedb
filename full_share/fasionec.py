@@ -31,12 +31,7 @@ def data():
         '[Order].予約FLG'                   : [('count','*'),('sum','[OrderDetail].数量'),('sum','[OrderDetail].注文金額'),('sum','[Order].注文時追加料金'),('avg','[OrderDetail].数量'),('avg','[OrderDetail].注文金額'),('avg','[Order].注文時追加料金')]
     }
     """
-
-
-
-    return db_name,table,groupby,aggregate
+    return db_name, table, groupby, aggregate
 
 if __name__ == '__main__':
     print(0)
-    a,b,c=data()
-    print(c.keys())
