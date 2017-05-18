@@ -24,8 +24,12 @@ class SeeDB:
         for group in self.groupby:
             g_b += group + ', '
         select = 'select ' + g_b
+        # 作り変える必要あり
         for agg in self.aggregate:
-            select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', '
+            if '数量' in agg:
+                select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', '
+            else:
+                select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', avg(CAST(' + agg.split('.')[1] + '/[OrderDetail].数量 AS BIGINT)) AS 平均' + agg.split('.')[1] + ', '
         select = select[:-2]
         full_query = select + ' from ' + self.table + ' group by ' + g_b[:-2] + ' order by ' + g_b[:-2]
         #print(full_query)
@@ -39,13 +43,13 @@ class SeeDB:
             if self.column1 != df1.columns[i] and self.column2 != df1.columns[i]:
                 dt1, dt2 = pd.DataFrame(), pd.DataFrame()
                 if self.column1 != '':
-                    dt1 = df1[df1[self.column1] == self.where1].groupby(df1.columns[i]).sum().iloc[:,-3:]
+                    dt1 = df1[df1[self.column1] == self.where1].groupby(df1.columns[i]).sum().iloc[:,-5:]
                 else:
-                    dt1 = df1.groupby(df1.columns[i]).sum().iloc[:, -3:]
+                    dt1 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
                 if self.column2 != '':
-                    dt2 = df1[df1[self.column2] == self.where2].groupby(df1.columns[i]).sum().iloc[:, -3:]
+                    dt2 = df1[df1[self.column2] == self.where2].groupby(df1.columns[i]).sum().iloc[:, -5:]
                 else:
-                    dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -3:]
+                    dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
                 """
                 dt1['平均注文金額'] = [dt1.ix[pp, -3] / dt1.ix[pp, -2] for pp in range(len(dt1.ix[:, -2]))]
                 dt2['平均注文金額'] = [dt2.ix[pp, -3] / dt2.ix[pp, -2] for pp in range(len(dt2.ix[:, -2]))]
@@ -136,21 +140,41 @@ class SeeDB:
         fig, axes = plt.subplots(nrows=n, ncols=m, figsize=(10, 8))
         ii = 0
         for dis,dt in self.top_k.items():
+            """
             self.attribute1, self.attribute2, self.func = dt[1][1].split('.')[1], dt[1][2], dt[1][0]
             data1, data2 = self.query()
             data1, data2 = self.nomalization(data1), self.nomalization(data2)
+            """
+            df1, dt1, dt2 = self.df, pd.DataFrame(), pd.DataFrame()
+            if self.column1 != '':
+                dt1 = df1[df1[self.column1] == self.where1].groupby(dt[1]).sum().iloc[:,-5:][dt[2]]
+            else:
+                dt1 = df1.groupby(dt[1]).sum().iloc[:, -5:][dt[2]]
+            if self.column2 != '':
+                dt2 = df1[df1[self.column2] == self.where2].groupby(dt[1]).sum().iloc[:, -5:][dt[2]]
+            else:
+                dt2 = df1.groupby(dt[1]).sum().iloc[:, -5:][dt[2]]
+
+            t1, t2 = dict(dt1), dict(dt2)
             x_agre = list()
+            for i in t1.keys():
+                x_agre.append(i)
+            for i in t2.keys():
+                if not i in x_agre:
+                    x_agre.append(i)
+            """"
             for i, j in data1 + data2:
                 if not i in x_agre:
                     x_agre.append(i)
-            t1, t2 = dict(data1), dict(data2)
+            """
+
             x, y1, y2 = [i for i in range(0, len(x_agre))], list(), list()
             for i in x_agre:
-                if i in t1:
+                if i in t1.keys():
                     y1.append(t1[i])
                 else:
                     y1.append(0)
-                if i in t2:
+                if i in t2.keys():
                     y2.append(t2[i])
                 else:
                     y2.append(0)
@@ -160,7 +184,7 @@ class SeeDB:
             axes[int(ii/m), ii%m].set_xticks(x)
             axes[int(ii/m), ii%m].set_xticklabels(x_agre, rotation=30)
             axes[int(ii/m), ii%m].set_title(ii)
-            axes[int(ii/m), ii%m].set_xlabel(self.attribute2)
+            #axes[int(ii/m), ii%m].set_xlabel(self.attribute2)
             axes[int(ii/m), ii%m].grid(True)
 
             ii+=1
@@ -168,6 +192,8 @@ class SeeDB:
                 break
         plt.show()
         #plt.savefig('sample.png')
+
+
 
     def output(self):
         print('================================================================')
@@ -192,12 +218,12 @@ class SeeDB:
         a = time.time()
         self.roop()
         self.calc_time = time.time() - a
-        """
+
         # visualization phase
         a = time.time()
         self.visualization()
         self.visualization_time = time.time() - a
-        """
+
         # output phase
         self.output()
 
