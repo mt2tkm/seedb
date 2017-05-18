@@ -1,14 +1,14 @@
 # -*- coding:utf-8 -*-
-import time,math,numpy as np
+import time, math, numpy as np
 from config import config_data
 import matplotlib.pyplot as plt
 import pandas as pd
 
 class SeeDB:
-    query_time,calc_time,visualization_time = 0,0,0
+    query_time, calc_time, visualization_time = 0,0,0
 
     def __init__(self, db, groupby, table, k, aggregate):
-        self.con,self.cursor = config_data(db)
+        self.con, self.cursor = config_data(db)
         self.groupby, self.table,self.k,self.aggregate = groupby, table, k, aggregate
         self.start = time.time()
         self.top_k = {}
@@ -49,11 +49,9 @@ class SeeDB:
                 """
                 dt1['平均注文金額'] = [dt1.ix[pp, -3] / dt1.ix[pp, -2] for pp in range(len(dt1.ix[:, -2]))]
                 dt2['平均注文金額'] = [dt2.ix[pp, -3] / dt2.ix[pp, -2] for pp in range(len(dt2.ix[:, -2]))]
-                
                 dt1['平均注文時追加金額'] = [dt1.ix[pp, 2] / dt1.ix[pp, 1] for pp in range(len(dt1.ix[:, 1]))]
                 dt2['平均注文時追加金額'] = [dt2.ix[pp, 2] / dt2.ix[pp, 1] for pp in range(len(dt2.ix[:, 1]))]
                 """
-                #dt1.to_csv('test.csv')
                 # z_nomalization phase
                 n_dt1, n_dt2 = (dt1 - dt1.mean())/dt1.std(), (dt2 - dt2.mean())/dt2.std()
                 dev_df = np.fabs(n_dt1 - n_dt2)
@@ -61,7 +59,6 @@ class SeeDB:
                 # top-k chaek phase
                 for xx in range(len(dev_df.columns)):
                     self.cheak(dev_df.ix[:,xx].sum(),dev_df.columns[xx],df1.columns[i])
-
             else:
                 pass
 
@@ -73,15 +70,13 @@ class SeeDB:
         for x,y in data:
             z += ( (x , y/sum_x), )
         return z
-    
-    
     def distance(self):
         a = time.time()
         #x,y = self.query()
         self.query_time += time.time() - a
         deviance = 0
         a = time.time()
-        x,y = self.nomalization(x),self.nomalization(y)
+        x,y = self.nomalization(x), self.nomalization(y)
         dd = dict()
         for i, j in x:
             dd[i] = j
@@ -135,15 +130,12 @@ class SeeDB:
                     self.top_k[i] = target
                     target = j
 
-
-
     def visualization(self):
         n = math.ceil(np.sqrt(self.k))
         m = math.ceil(self.k / n)
         fig, axes = plt.subplots(nrows=n, ncols=m, figsize=(10, 8))
         ii = 0
         for dis,dt in self.top_k.items():
-
             self.attribute1, self.attribute2, self.func = dt[1][1].split('.')[1], dt[1][2], dt[1][0]
             data1, data2 = self.query()
             data1, data2 = self.nomalization(data1), self.nomalization(data2)
