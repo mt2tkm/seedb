@@ -9,9 +9,10 @@ class SeeDB:
     def __init__(self, db,data_set,table,k):
         self.cursor = config_data(db)
         self.data_set, self.table,self.k = data_set, table, k
+        self.terms()
         self.start = time.time()
         self.top_k = {}
-        self.terms()
+
 
     def terms(self):
         self.where1,self.where2 = input('1つ目のwhere句を入力してください->'),input('2つ目のwhere句を入力してください->')
@@ -56,7 +57,6 @@ class SeeDB:
         deviance = 0
 
         a = time.time()
-
         x,y = self.nomalization(x),self.nomalization(y)
         dd = dict()
         for i, j in x:
@@ -66,10 +66,8 @@ class SeeDB:
                 dd[i] = math.fabs(dd[i] - j)
             else:
                 dd[i] = j
-
         for x, dis in dd.items():
             deviance += dis
-
         self.deviance_time += time.time() - a
 
         return deviance
@@ -132,7 +130,8 @@ class SeeDB:
             ii+=1
             if ii > self.k:
                 break
-        plt.show()
+        #
+                # plt.show()
         #plt.savefig('sample.png')
 
     def output(self):
@@ -144,8 +143,7 @@ class SeeDB:
         print('================================================================')
         print('All_time:',time.time()-self.start)
         print('Query_time:',self.query_time)
-        print('Calcu_deviance_time:',self.deviance_time)
-        print('Sort_time:',self.sort_time)
+        print('Calcu_deviance_time:',self.deviance_time+self.sort_time)
         print('Visualization_time:',self.visualization_time)
         print('================================================================')
 
@@ -158,7 +156,6 @@ class SeeDB:
                 if d != -1 and d<1:
                     self.cheak_k(d)
                 self.sort_time += time.time() - a
-
             print(time.time() - self.start)
         a = time.time()
         self.visualization()

@@ -10,9 +10,10 @@ class SeeDB:
     def __init__(self, db, groupby, table, k, aggregate):
         self.con, self.cursor = config_data(db)
         self.groupby, self.table,self.k,self.aggregate = groupby, table, k, aggregate
+        self.terms()
         self.start = time.time()
         self.top_k = {}
-        self.terms()
+
 
     def terms(self):
         self.column1, self.where1 = input('1つ目のwhere句の属性を入力してください->'), input('1つ目のwhere句の具体的条件を入力してください->')
@@ -190,7 +191,7 @@ class SeeDB:
             ii+=1
             if ii > self.k:
                 break
-        plt.show()
+        #plt.show()
         #plt.savefig('sample.png')
 
 
