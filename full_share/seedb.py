@@ -51,12 +51,6 @@ class SeeDB:
                     dt2 = df1[df1[self.column2] == self.where2].groupby(df1.columns[i]).sum().iloc[:, -5:]
                 else:
                     dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
-                """
-                dt1['平均注文金額'] = [dt1.ix[pp, -3] / dt1.ix[pp, -2] for pp in range(len(dt1.ix[:, -2]))]
-                dt2['平均注文金額'] = [dt2.ix[pp, -3] / dt2.ix[pp, -2] for pp in range(len(dt2.ix[:, -2]))]
-                dt1['平均注文時追加金額'] = [dt1.ix[pp, 2] / dt1.ix[pp, 1] for pp in range(len(dt1.ix[:, 1]))]
-                dt2['平均注文時追加金額'] = [dt2.ix[pp, 2] / dt2.ix[pp, 1] for pp in range(len(dt2.ix[:, 1]))]
-                """
                 # z_nomalization phase
                 n_dt1, n_dt2 = (dt1 - dt1.mean())/dt1.std(), (dt2 - dt2.mean())/dt2.std()
                 dev_df = np.fabs(n_dt1 - n_dt2)
@@ -66,36 +60,6 @@ class SeeDB:
                     self.cheak(dev_df.ix[:,xx].sum(),dev_df.columns[xx],df1.columns[i])
             else:
                 pass
-
-    """
-    def nomalization(self,data):
-        z,sum_x = tuple(),0
-        for x,y in data:
-            sum_x += y
-        for x,y in data:
-            z += ( (x , y/sum_x), )
-        return z
-    def distance(self):
-        a = time.time()
-        #x,y = self.query()
-        self.query_time += time.time() - a
-        deviance = 0
-        a = time.time()
-        x,y = self.nomalization(x), self.nomalization(y)
-        dd = dict()
-        for i, j in x:
-            dd[i] = j
-        for i, j in y:
-            if i in dd:
-                dd[i] = math.fabs(dd[i] - j)
-            else:
-                dd[i] = j
-        for x, dis in dd.items():
-            deviance += dis
-        self.deviance_time += time.time() - a
-
-        return deviance
-    """
 
     def cheak(self,dev,y_axis,x_axis):
         z = (dev,x_axis,y_axis)
@@ -113,39 +77,12 @@ class SeeDB:
                     self.top_k[i] = z
                     z = j
 
-    def cheak_k(self,d):
-        if self.attribute1 == '*':
-            self.attribute1 = '.'+self.attribute1
-
-        if len(self.top_k) == 0:
-            self.top_k[0] = (d,(self.func,self.attribute1,self.attribute2))
-        elif len(self.top_k) < self.k:
-
-            target = (d, (self.func,self.attribute1, self.attribute2))
-            flg = -1
-            for i, j in self.top_k.items():
-                if j[0] < target[0]:
-                    self.top_k[i] = target
-                    target,flg = j,-1
-            self.top_k[len(self.top_k)] = target
-        else:
-            target = (d,(self.func,self.attribute1,self.attribute2))
-            for i,j in self.top_k.items():
-                if j[0] < target[0]:
-                    self.top_k[i] = target
-                    target = j
-
     def visualization(self):
         n = math.ceil(np.sqrt(self.k))
         m = math.ceil(self.k / n)
         fig, axes = plt.subplots(nrows=n, ncols=m, figsize=(10, 8))
         ii = 0
         for dis,dt in self.top_k.items():
-            """
-            self.attribute1, self.attribute2, self.func = dt[1][1].split('.')[1], dt[1][2], dt[1][0]
-            data1, data2 = self.query()
-            data1, data2 = self.nomalization(data1), self.nomalization(data2)
-            """
             df1, dt1, dt2 = self.df, pd.DataFrame(), pd.DataFrame()
             if self.column1 != '':
                 dt1 = df1[df1[self.column1] == self.where1].groupby(dt[1]).sum().iloc[:,-5:][dt[2]]
@@ -163,11 +100,6 @@ class SeeDB:
             for i in t2.keys():
                 if not i in x_agre:
                     x_agre.append(i)
-            """"
-            for i, j in data1 + data2:
-                if not i in x_agre:
-                    x_agre.append(i)
-            """
 
             x, y1, y2 = [i for i in range(0, len(x_agre))], list(), list()
             for i in x_agre:
@@ -193,8 +125,6 @@ class SeeDB:
                 break
         #plt.show()
         #plt.savefig('sample.png')
-
-
 
     def output(self):
         print('================================================================')
@@ -227,4 +157,3 @@ class SeeDB:
 
         # output phase
         self.output()
-
