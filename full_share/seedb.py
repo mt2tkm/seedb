@@ -4,6 +4,12 @@ from config import config_data
 import matplotlib.pyplot as plt
 import pandas as pd
 
+"""課題点
+    ・x_axisの個数が違う場合の乖離度について考慮されていない
+    ・function(fullshare_query)で'数量'という名前の属性があることを前提としている（＋　平均を計算する箇所がよくない書き方）
+    ・集約関数の対象数がデータによって変化するのに、それが考慮されていない
+"""
+
 class SeeDB:
     query_time, calc_time, visualization_time = 0,0,0
 
