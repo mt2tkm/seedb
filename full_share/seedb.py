@@ -134,15 +134,15 @@ class SeeDB:
 
     def output(self):
         print('================================================================')
-        print('順位, 乖離度, (集計関数, 集計属性, 集約属性)')
-        print('================================================================')
-        for i,j in self.top_k.items():
-            print(i+1,j[0],j[1],j[2])
-        print('================================================================')
         print('All_time:',time.time()-self.start)
         print('Query_time:',self.query_time)
         print('Calculate_time:',self.calc_time)
         print('Visualization_time:',self.visualization_time)
+        print('================================================================')
+        print('順位, 乖離度, (集計関数, 集計属性, 集約属性)')
+        print('================================================================')
+        for i,j in self.top_k.items():
+            print(i+1,j[0],j[1],j[2])
         print('================================================================')
 
 
