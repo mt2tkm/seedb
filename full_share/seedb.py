@@ -59,7 +59,7 @@ class SeeDB:
                     dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
                 # z_nomalization phase
                 n_dt1, n_dt2 = (dt1 - dt1.mean())/dt1.std(), (dt2 - dt2.mean())/dt2.std()
-                dev_df = np.fabs(n_dt1 - n_dt2)
+                dev_df = np.fabs(n_dt1 - n_dt2).fillna(0)
 
                 # top-k chaek phase
                 for xx in range(len(dev_df.columns)):
