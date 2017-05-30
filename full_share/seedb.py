@@ -7,19 +7,16 @@ import pandas as pd
 """課題点
     ・x_axisの個数が違う場合の乖離度について考慮されていない
     ・function(fullshare_query)で'数量'という名前の属性があることを前提としている（＋　平均を計算する箇所がよくない書き方）
-    ・集約関数の対象数がデータによって変化するのに、それが考慮されていない
 """
 
 class SeeDB:
     query_time, calc_time, visualization_time = 0,0,0
-
     def __init__(self, db, groupby, table, k, aggregate):
         self.con, self.cursor = config_data(db)
         self.groupby, self.table,self.k,self.aggregate = groupby, table, k, aggregate
         self.terms()
         self.start = time.time()
         self.top_k = {}
-
 
     def terms(self):
         self.column1, self.where1 = input('1つ目のwhere句の属性を入力してください->'), input('1つ目のwhere句の具体的条件を入力してください->')
@@ -31,7 +28,9 @@ class SeeDB:
         for group in self.groupby:
             g_b += group + ', '
         select = 'select ' + g_b
-        # 作り変える必要あり
+        """
+        ＠作り変える必要あり
+        """
         for agg in self.aggregate:
             if '数量' in agg:
                 select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', '
@@ -39,24 +38,24 @@ class SeeDB:
                 select = select + 'sum(CAST(' + agg + ' AS BIGINT)) AS ' + agg.split('.')[1] + ', avg(CAST(' + agg.split('.')[1] + '/[OrderDetail].数量 AS BIGINT)) AS 平均' + agg.split('.')[1] + ', '
         select = select[:-2]
         full_query = select + ' from ' + self.table + ' group by ' + g_b[:-2] + ' order by ' + g_b[:-2]
-        #print(full_query)
+
         # execute fullshare_query and put in DataFrame
         self.df = pd.io.sql.read_sql(full_query,self.con)
 
     def roop(self):
-        df1 = self.df
+        df1, num_agg = self.df, 2*len(self.aggregate) - 1
         for i in range(len(self.groupby)):
             # whether terms match group-by column
             if self.column1 != df1.columns[i] and self.column2 != df1.columns[i]:
                 dt1, dt2 = pd.DataFrame(), pd.DataFrame()
                 if self.column1 != '':
-                    dt1 = df1[df1[self.column1] == self.where1].groupby(df1.columns[i]).sum().iloc[:,-5:]
+                    dt1 = df1[df1[self.column1] == self.where1].groupby(df1.columns[i]).sum().iloc[:,-num_agg:]
                 else:
-                    dt1 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
+                    dt1 = df1.groupby(df1.columns[i]).sum().iloc[:, -num_agg:]
                 if self.column2 != '':
-                    dt2 = df1[df1[self.column2] == self.where2].groupby(df1.columns[i]).sum().iloc[:, -5:]
+                    dt2 = df1[df1[self.column2] == self.where2].groupby(df1.columns[i]).sum().iloc[:, -num_agg:]
                 else:
-                    dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -5:]
+                    dt2 = df1.groupby(df1.columns[i]).sum().iloc[:, -num_agg:]
                 # z_nomalization phase
                 n_dt1, n_dt2 = (dt1 - dt1.mean())/dt1.std(), (dt2 - dt2.mean())/dt2.std()
                 dev_df = np.fabs(n_dt1 - n_dt2).fillna(0)
